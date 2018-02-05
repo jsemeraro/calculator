@@ -7,11 +7,14 @@ defmodule Calc do
     parsed_list = equ |> String.split(["\n", " "]) |> parse_equ
 
     # validate the first element
+    # found out about lists and their capabilities from: https://hexdocs.pm/elixir/List.html
     first_elem = List.first(parsed_list)
+
     if determine_num?(first_elem) or first_elem == "(" do
       tree = build_tree(parsed_list)
       solving(tree)
     else
+      # found out about raising errors: https://elixir-lang.org/getting-started/try-catch-and-rescue.html
       raise("Error: invalid input")
     end
   end
@@ -45,6 +48,7 @@ defmodule Calc do
     end
   end
 
+  # found out about regexs: https://hexdocs.pm/elixir/Regex.html
   def determine_num?(elem) do
     Regex.match?(~r/\d+/, elem)
   end
@@ -55,7 +59,7 @@ defmodule Calc do
 
   def find_close(list, ct, pos) do
     [first | tail] = list
-    
+    # found enums and capability: https://hexdocs.pm/elixir/Enum.html
     if Enum.any?(list, fn(x) -> x == ")" end) do
       case first do 
         ")" ->
@@ -70,7 +74,7 @@ defmodule Calc do
           find_close(tail, ct, pos+1)
       end
     else
-      IO.puts("Error: invalid parens")
+      raise("Error: invalid parens")
       nil
     end
   end
@@ -86,6 +90,7 @@ defmodule Calc do
   end
 
   def parse_ops(str) do
+    # https://hexdocs.pm/elixir/Kernel.SpecialForms.html#case/2
     case str do
       "+" -> :+
       "-" -> :-
@@ -96,7 +101,7 @@ defmodule Calc do
     end
   end
 
-
+  # aliasing: https://hexdocs.pm/elixir/Kernel.SpecialForms.html#quote/2-hygiene-in-aliases
   def build_tree(equ_list) do
     if !is_nil(equ_list) && !Enum.empty?(equ_list) do
       equ_list = trim_parens(equ_list)
